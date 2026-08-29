@@ -1,0 +1,22 @@
+{
+  "name": "sangyoui-navi",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "日本産業医機構ポータル - 産業医・産業保健に関する総合情報サイト",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port 4321",
+    "start": "astro dev --host 0.0.0.0 --port 4321",
+    "build": "astro build",
+    "preview": "node ./dist/server/entry.mjs",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.0.0",
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.6.0"
+  }
+}
