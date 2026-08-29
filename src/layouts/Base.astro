@@ -1,0 +1,95 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "産業医・産業保健に関する総合情報サイト" } = Astro.props;
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+const fullTitle =
+  title === "日本産業医機構ポータル"
+    ? title
+    : `${title} | 日本産業医機構ポータル`;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/">
+          <img class="logo" src="/favicon.svg" alt="" width="34" height="34" />
+          <span>日本産業医機構ポータル</span>
+        </a>
+        <nav class="nav" aria-label="メインナビゲーション">
+          <a href="/" aria-current={isActive("/") && path === "/" ? "page" : undefined}
+            >ホーム</a
+          >
+          <a
+            href="/for-companies/"
+            aria-current={isActive("/for-companies") ? "page" : undefined}
+            >企業向け</a
+          >
+          <a
+            href="/for-doctors/"
+            aria-current={isActive("/for-doctors") ? "page" : undefined}
+            >産業医向け</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="cols">
+          <div>
+            <h4>企業向け</h4>
+            <ul>
+              <li><a href="/for-companies/safety-health/">安全衛生の実務情報</a></li>
+              <li><a href="/for-companies/consult/">産業医紹介・相談窓口</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>産業医向け</h4>
+            <ul>
+              <li><a href="/for-doctors/knowledge/">産業医業務の知識</a></li>
+              <li><a href="/for-doctors/independence/">仕事の獲得と契約</a></li>
+              <li><a href="/for-doctors/learn/">産業医アカデミー</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>法令・一次情報</h4>
+            <ul>
+              <li>
+                <a href="https://www.mhlw.go.jp/" rel="noopener" target="_blank"
+                  >厚生労働省</a
+                >
+              </li>
+              <li>
+                <a href="https://elaws.e-gov.go.jp/" rel="noopener" target="_blank"
+                  >e-Gov 法令検索</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          運営: 日本産業医機構 ／ 本サイトは中立の情報拠点です。
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

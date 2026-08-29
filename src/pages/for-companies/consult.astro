@@ -1,0 +1,155 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base
+  title="産業医紹介・コンサル相談"
+  description="事業規模や課題に合わせた産業医の選定・活用について、ご相談を受け付けています。"
+>
+  <main>
+    <div class="container">
+      <p class="crumbs">
+        <a href="/">ホーム</a> ／ <a href="/for-companies/">企業向け</a> ／
+        産業医紹介・コンサル相談
+      </p>
+
+      <div class="cta company" style="margin-bottom: 28px;">
+        <h3>自社に合った産業医を見つける</h3>
+        <p style="margin:0;">
+          事業場の規模・業種・課題をお聞かせください。中立の立場から、
+          産業医の選定や産業保健体制づくりのご相談を承ります。
+        </p>
+      </div>
+
+      <article class="article">
+        <h1>相談フォーム</h1>
+        <p>
+          以下のフォームからお問い合わせください。<span style="color:#c0392b;"
+            >*</span
+          > は必須項目です。
+        </p>
+
+        <form id="consult-form" novalidate>
+          <div class="form-field">
+            <label for="company">会社名 <span style="color:#c0392b;">*</span></label>
+            <input id="company" name="company" type="text" autocomplete="organization" />
+            <div class="field-error" data-error-for="company"></div>
+          </div>
+
+          <div class="form-field">
+            <label for="name">ご担当者名 <span style="color:#c0392b;">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" />
+            <div class="field-error" data-error-for="name"></div>
+          </div>
+
+          <div class="form-field">
+            <label for="email">メールアドレス <span style="color:#c0392b;">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" />
+            <div class="field-error" data-error-for="email"></div>
+          </div>
+
+          <div class="form-field">
+            <label for="employees">従業員数</label>
+            <select id="employees" name="employees">
+              <option value="">選択してください</option>
+              <option value="lt50">50人未満</option>
+              <option value="50-99">50〜99人</option>
+              <option value="100-499">100〜499人</option>
+              <option value="500+">500人以上</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="message">ご相談内容 <span style="color:#c0392b;">*</span></label>
+            <textarea id="message" name="message" rows="5"></textarea>
+            <div class="field-error" data-error-for="message"></div>
+          </div>
+
+          <button class="btn" type="submit" id="submit-btn">相談を送信する</button>
+          <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+        </form>
+      </article>
+    </div>
+  </main>
+</Base>
+
+<script>
+  const form = document.getElementById("consult-form") as HTMLFormElement;
+  const status = document.getElementById("form-status") as HTMLDivElement;
+  const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+
+  const setError = (field: string, message: string) => {
+    const el = document.querySelector(`[data-error-for="${field}"]`);
+    if (el) el.textContent = message;
+  };
+
+  const clearErrors = () => {
+    document
+      .querySelectorAll(".field-error")
+      .forEach((el) => (el.textContent = ""));
+  };
+
+  const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+    status.className = "form-status";
+    status.textContent = "";
+
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<
+      string,
+      string
+    >;
+
+    let valid = true;
+    if (!data.company?.trim()) {
+      setError("company", "会社名を入力してください。");
+      valid = false;
+    }
+    if (!data.name?.trim()) {
+      setError("name", "ご担当者名を入力してください。");
+      valid = false;
+    }
+    if (!data.email?.trim()) {
+      setError("email", "メールアドレスを入力してください。");
+      valid = false;
+    } else if (!isEmail(data.email)) {
+      setError("email", "メールアドレスの形式が正しくありません。");
+      valid = false;
+    }
+    if (!data.message?.trim()) {
+      setError("message", "ご相談内容を入力してください。");
+      valid = false;
+    }
+    if (!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送信中…";
+
+    try {
+      const res = await fetch("/api/consult", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json();
+      if (res.ok && body.ok) {
+        status.className = "form-status success";
+        status.textContent = `受付番号 ${body.reference} で承りました。${body.message}`;
+        form.reset();
+      } else {
+        status.className = "form-status error";
+        status.textContent =
+          body.message ?? "送信に失敗しました。時間をおいて再度お試しください。";
+      }
+    } catch (err) {
+      status.className = "form-status error";
+      status.textContent =
+        "通信エラーが発生しました。時間をおいて再度お試しください。";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "相談を送信する";
+    }
+  });
+</script>

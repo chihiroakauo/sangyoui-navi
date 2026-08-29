@@ -24,3 +24,33 @@ GitHub: https://github.com/nihon-sangyoui-organization/sangyoui-navi
 - アカデミーの売り込み文は /for-doctors/learn/ とアカデミー本体に限る
 - 法令は一次情報へリンクする
 - 独自ドメイン移行を前提にする
+
+## 開発
+
+[Astro](https://astro.build/) で構築した情報サイトです。コンテンツページは静的生成し、相談フォームの受付 API のみ Node アダプタでオンデマンド実行します。
+
+### 必要環境
+
+- Node.js 20.3 以上（推奨: 22）
+
+### セットアップと起動
+
+```bash
+npm ci          # 依存関係のインストール
+npm run dev     # 開発サーバー (http://localhost:4321)
+```
+
+### そのほかのコマンド
+
+```bash
+npm run build   # 本番ビルド (dist/)
+npm run preview # ビルド成果物を Node サーバーで起動
+npm run check   # 型チェック (astro check)
+```
+
+### ディレクトリ構成
+
+- `src/pages/` … ルーティング（`for-companies/`・`for-doctors/`・`api/`）
+- `src/layouts/` … 共通レイアウト
+- `src/styles/` … グローバル CSS
+- `public/` … 静的アセット
